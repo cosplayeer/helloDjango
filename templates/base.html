@@ -56,14 +56,22 @@
   </style>
 
 </head>
-
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        {{ message }}
+      </div>
+    {% endfor %}
+{% endif %}
 <body>
     <div class="container">
         <header id="site-header">
             <div class="row">
                 <div class="col-md-4 col-sm-5 col-xs-8">
                     <div class="logo">
-                        <h1><a href="index.html"><b>Black</b> &amp; White</a></h1>
+                        <h1><a href="{% url 'blog:index' %}"><b>Black</b> &amp; White</a></h1>
                     </div>
                 </div><!-- col-md-4 -->
                 <div class="col-md-8 col-sm-7 col-xs-4">
@@ -76,7 +84,7 @@
 
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav navbar-right">
-                                <li class="cl-effect-11"><a href="index.html" data-hover="首页">首页</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
                                 <li class="cl-effect-11"><a href="full-width.html" data-hover="博客">博客</a></li>
                                 <li class="cl-effect-11"><a href="about.html" data-hover="关于">关于</a></li>
                                 <li class="cl-effect-11"><a href="contact.html" data-hover="联系">联系</a></li>
@@ -126,9 +134,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <p class="copyright">&copy 2017 - 采集自<a href="http://www.cssmoban.com/"
-                                                            target="_blank" title="模板之家">模板之家</a>
-                        - 由<a href="http://zmrenwu.com/" title="网页模板" target="_blank">追梦人物的博客</a>修改
+                    <p class="copyright">&copy 2020 - 采集自<a href="http://www.cssmoban.com/"
+                                                            target="_blank" title="模板之家">dyp之家</a>
+                        - 由<a href="http://zmrenwu.com/" title="网页模板" target="_blank">dyp的博客</a>修改
                     </p>
                 </div>
             </div>
