@@ -71,8 +71,10 @@ def detail(request, pk):
 class ArchiveView(IndexView):
     def get_queryset(self):
         # post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        return super(ArchiveView, self).get_queryset().filter(created_time__year=self.kwargs.get('year'),
-                                                            created_time__month=self.kwargs.get('month'))
+        year = self.kwargs.get('year')
+        month = self.kwargs.get('month')
+        return super(ArchiveView, self).get_queryset().filter(created_time__year=year,
+                                                            created_time__month=month)
 
 def archive(request, year, month):
     post_list = Post.objects.filter(created_time__year=year,
