@@ -24,9 +24,13 @@
     <link href="https://cdn.bootcss.com/highlight.js/9.15.8/styles/github.min.css" rel="stylesheet">
     
     <style>
-    .codehilite {
+        /* 搜索关键词高亮 */
+        span.highlighted {
+          color: red;
+        }
+    {% comment %} .codehilite {
       padding: 0;
-    }
+    } {% endcomment %}
  
     /* for block of numbers */
     .hljs-ln-numbers {
@@ -94,8 +98,9 @@
                     <div id="header-search-box">
                         <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
                         <div id="search-form" class="search-form">
-                            <form role="search" method="get" id="searchform" action="#">
-                                <input type="search" placeholder="搜索" required>
+                            <form role="search" method="get" id="searchform" action="{% url 'haystack_search' %}">
+                            {% comment %} <form role="search" method="get" id="searchform" action="{% url 'blog:search' %}"> {% endcomment %}
+                                <input type="search" name="q" placeholder="搜索" required>
                                 <button type="submit"><span class="ion-ios-search-strong"></span></button>
                             </form>
                         </div>
@@ -156,7 +161,6 @@
             </ul>
         </nav>
     </div>
-
     <script src="{% static 'blog/js/script.js' %}"></script>
 <body>
     <script src="https://cdn.bootcss.com/highlight.js/9.15.8/highlight.min.js"></script>

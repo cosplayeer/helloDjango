@@ -8,12 +8,14 @@ autopep8 = "*"
 fabric = "*"
 
 [packages]
-django = "==2.2.3"
+django = "~=2.2"
 markdown = "*"
 pytz = "*"
 gunicorn = "*"
 faker = "*"
 django-pure-pagination = "*"
+django-haystack = "*"
+elasticsearch = ">=2,<3"
 
 [requires]
-python_version = "3.8"
+python_version = "3.6"

@@ -7,7 +7,8 @@ from django.views.generic import ListView, DetailView
 from pure_pagination.mixins import PaginationMixin
 
 from .models import Post, Category, Tag
- 
+from django.db.models import Q
+
 class IndexView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
@@ -110,3 +111,15 @@ def tag(request, pk):
     t = get_object_or_404(Tag, pk=pk)
     post_list = Post.objects.filter(tags=t) #.order_by('-created_time')
     return render(request, 'blog/index.html', context={'post_list': post_list})    
+
+
+def search(request):
+    q = request.GET.get('q')
+
+    if not q:
+        error_msg = "请输入搜索关键词"
+        messages.add_message(request, messages.ERROR, error_msg, extra_tags='danger')
+        return redirect('blog:index')
+
+    post_list = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q))
+    return render(request, 'blog/index.html', {'post_list': post_list})
