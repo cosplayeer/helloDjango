@@ -13,4 +13,5 @@ urlpatterns = [
     path('tags/<int:pk>/', views.TagView.as_view(), name='tag'),
     # 其他 url 配置
     # path('search/', views.search, name='search'),
+    path('api/index/', views.index)
 ]

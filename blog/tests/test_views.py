@@ -1,10 +1,16 @@
+from datetime import timedelta
+
+
 from django.test import TestCase
 from django.apps import apps
 from django.contrib.auth.models import User
 from blog.models import Category, Post, Tag
 from django.utils import timezone
-from datetime import timedelta
 from django.urls import reverse
+
+from ..feeds import AllPostsRssFeed
+from ..models import Category, Post, Tag
+
 
 class BlogDataTestCase(TestCase):
     def setUp(self):
@@ -170,3 +176,20 @@ class AdminTestCase(BlogDataTestCase):
         self.assertEqual(post.author, self.user)
         self.assertEqual(post.title, data.get('title'))
         self.assertEqual(post.category, self.cate1)
+
+class RSSTestCase(BlogDataTestCase):
+    
+    def setUp(self):
+        super().setUp()
+        self.url = reverse('rss')
+
+    def test_rss_subscription_content(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, AllPostsRssFeed.title)
+        self.assertContains(response, AllPostsRssFeed.description)
+        self.assertContains(response, self.post1.title)
+        self.assertContains(response, self.post2.title)
+        self.assertContains(response, '[%s] %s' % (self.post1.category, self.post1.title))
+        self.assertContains(response, '[%s] %s' % (self.post2.category, self.post2.title))
+        self.assertContains(response, self.post1.body)
+        self.assertContains(response, self.post2.body)

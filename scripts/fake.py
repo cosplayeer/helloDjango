@@ -25,7 +25,7 @@ if __name__ == "__main__":
     from django.contrib.auth.models import User
 
     # # 取消实时索引生成，因为本地运行 fake 脚本时可能并未启动 Elasticsearch 服务。
-    # apps.get_app_config("haystack").signal_processor.teardown()
+    apps.get_app_config("haystack").signal_processor.teardown()
 
     print("clean database")
     Post.objects.all().delete()

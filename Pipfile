@@ -17,6 +17,8 @@ faker = "*"
 django-pure-pagination = "*"
 django-haystack = "*"
 elasticsearch = ">=2,<3"
+djangorestframework = "*"
+django-filter = "*"
 
 [requires]
 importlib_metadata=0.12

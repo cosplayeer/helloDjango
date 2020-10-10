@@ -8,6 +8,14 @@ from pure_pagination.mixins import PaginationMixin
 
 from .models import Post, Category, Tag
 from django.db.models import Q
+#new rest
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
+from .models import Post
+from .serializers import PostListSerializer
+
 
 class IndexView(PaginationMixin, ListView):
     model = Post
@@ -16,10 +24,16 @@ class IndexView(PaginationMixin, ListView):
     # 指定 paginate_by 属性后开启分页功能，其值代表每一页包含多少篇文章
     paginate_by = 10
 
+# def index(request):
+#    post_list = Post.objects.all()
+# #    post_list = Post.objects.all().order_by('-created_time')
+#    return render(request, 'blog/index.html',context={'post_list': post_list})
+
+@api_view(http_method_names=["GET"])
 def index(request):
-   post_list = Post.objects.all()
-#    post_list = Post.objects.all().order_by('-created_time')
-   return render(request, 'blog/index.html',context={'post_list': post_list})
+    post_list = Post.objects.all().order_by('-created_time')
+    serializer = PostListSerializer(post_list, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的
