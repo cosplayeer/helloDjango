@@ -16,6 +16,14 @@ from rest_framework import status
 from .models import Post
 from .serializers import PostListSerializer
 
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.permissions import AllowAny
+
+from rest_framework import viewsets
+from rest_framework import mixins
+
+
 
 class IndexView(PaginationMixin, ListView):
     model = Post
@@ -29,11 +37,25 @@ class IndexView(PaginationMixin, ListView):
 # #    post_list = Post.objects.all().order_by('-created_time')
 #    return render(request, 'blog/index.html',context={'post_list': post_list})
 
-@api_view(http_method_names=["GET"])
-def index(request):
-    post_list = Post.objects.all().order_by('-created_time')
-    serializer = PostListSerializer(post_list, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+# @api_view(http_method_names=["GET"])
+# def index(request):
+#     post_list = Post.objects.all().order_by('-created_time')
+#     serializer = PostListSerializer(post_list, many=True)
+#     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class IndexPostListAPIView(ListAPIView):
+#     serializer_class = PostListSerializer
+#     queryset = Post.objects.all()
+#     pagination_class = LimitOffsetPagination  #PageNumberPagination
+#     permission_classes = [AllowAny]
+
+class PostViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = PostListSerializer
+    queryset = Post.objects.all()
+    pagination_class = PageNumberPagination
+    permission_classes = [AllowAny]
+
+# index = PostViewSet.as_view({'get':'list'})
 
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的

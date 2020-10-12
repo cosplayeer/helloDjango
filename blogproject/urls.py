@@ -17,9 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from blog.feeds import AllPostsRssFeed
 from rest_framework import routers
+from blog.views import PostViewSet
+from rest_framework.routers import DefaultRouter
 
 
-router = routers.DefaultRouter()
+router = DefaultRouter()
+router.register(r'posts', PostViewSet, basename='post')
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('blog.urls')),
