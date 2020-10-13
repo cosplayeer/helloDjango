@@ -14,15 +14,17 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Post
-from .serializers import PostListSerializer
+from .serializers import PostListSerializer, PostRetrieveSerializer
 
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 
-from rest_framework import viewsets
-from rest_framework import mixins
-
+from rest_framework import viewsets, mixins, status
+from rest_framework.decorators import action
+from rest_framework.serializers import DateField
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import PostFilter
 
 
 class IndexView(PaginationMixin, ListView):
@@ -49,20 +51,52 @@ class IndexView(PaginationMixin, ListView):
 #     pagination_class = LimitOffsetPagination  #PageNumberPagination
 #     permission_classes = [AllowAny]
 
-class PostViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class PostViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+    ):
     serializer_class = PostListSerializer
+    # ---if version
+    # def get_serializer_class():
+    #     if self.action == 'list':
+    #         return PostListSerializer
+    #     elif self.action == 'retrieve':
+    #         return PostRetrieveSerializer
+    #     else:
+    #         return super().get_serializer_class()
+    #--- attributes version
+    serializer_class_table = {
+        'list': PostListSerializer,
+        'retrieve':PostRetrieveSerializer,
+    }
+    def get_serializer_class(self):
+        return self.serializer_class_table.get(
+             self.action, super().get_serializer_class()
+        )
     queryset = Post.objects.all()
     pagination_class = PageNumberPagination
     permission_classes = [AllowAny]
 
-# index = PostViewSet.as_view({'get':'list'})
-
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_path="archive/dates",
+        url_name="archive-date"
+    )
+    def list_archive_dates(self, request, *args, **kwargs):
+        dates = Post.objects.dates('created_time', 'month', order='DESC')
+        date_field = DateField()
+        data = [date_field.to_representation(date) for date in dates]
+        return Response(data=data, status=status.HTTP_200_OK)
+    
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PostFilter
+    
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的
     model = Post
     template_name = 'blog/detail.html'
     context_object_name = 'post'
-
+    
     def get(self, request, *args, **kwargs):
         # 覆写 get 方法的目的是因为每当文章被访问一次，就得将文章阅读量 +1
         # get 方法返回的是一个 HttpResponse 实例

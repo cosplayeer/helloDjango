@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'comments.apps.CommentsConfig',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
