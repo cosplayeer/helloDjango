@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Category, Post, Tag
 from drf_haystack.serializers import HaystackSerializerMixin
+from rest_framework.serializers import CharField
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -75,6 +76,30 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
 #     )
 #     return self.serializer_class
 
+
+from .utils import Highlighter
+
+class HighlightedCharField(CharField):
+    def to_representation(self, value):
+        value = super().to_representation(value)
+        request = self.context["request"]
+        query = request.query_params["text"]
+        highlighter = Highlighter(query)
+        return highlighter.highlight(value)
+
 class PostHaystackSerializer(HaystackSerializerMixin, PostListSerializer):
+    title = HighlightedCharField()
+    summary = HighlightedCharField(source="body")
+
     class Meta(PostListSerializer.Meta):
         search_fields = ["text"]
+        fields = [
+            "id",
+            "title",
+            "summary",
+            "created_time",
+            "excerpt",
+            "category",
+            "author",
+            "views",
+        ]
