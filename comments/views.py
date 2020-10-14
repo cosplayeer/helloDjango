@@ -6,6 +6,11 @@ from .forms import CommentForm
 
 from django.contrib import messages
 
+
+from rest_framework import mixins, viewsets
+from .models import Comment
+from .serializers import CommentSerializer
+
 @require_POST
 def comment(request, post_pk):
     # 先获取被评论的文章，因为后面需要把评论和被评论的文章关联起来。
@@ -43,3 +48,8 @@ def comment(request, post_pk):
     messages.add_message(request, messages.ERROR, '评论发表失败！请修改表单中的错误后重新提交。', extra_tags='danger')
     return render(request, 'comments/preview.html', context=context)
 
+class CommentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return Comment.objects.all()

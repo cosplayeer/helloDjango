@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'comments.apps.CommentsConfig',
     'rest_framework',
     'django_filters',
+    'drf_haystack',
 ]
 
 MIDDLEWARE = [

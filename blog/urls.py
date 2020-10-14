@@ -7,6 +7,7 @@ app_name = 'blog'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('posts/<int:pk>/', views.PostDetailView.as_view(), name='detail'),
+    # path('posts/<int:pk>/', views.detail, name='detail'),
     path('archives/<int:year>/<int:month>/', views.ArchiveView.as_view(), name='archive'),
     # path('archives/<int:year>/<int:month>/', views.archive, name='archive'),
     path('categories/<int:pk>/', views.CategoryView.as_view(), name='category'),
@@ -15,5 +16,4 @@ urlpatterns = [
     # path('search/', views.search, name='search'),
     # path('api/index/', views.index),
     # path('api/index/', views.IndexPostListAPIView.as_view()),
-    # path('api/index/', views.index),
 ]

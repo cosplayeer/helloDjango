@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Category, Post, Tag
+from drf_haystack.serializers import HaystackSerializerMixin
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,3 +74,7 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
 #         % self.__class__.__name__
 #     )
 #     return self.serializer_class
+
+class PostHaystackSerializer(HaystackSerializerMixin, PostListSerializer):
+    class Meta(PostListSerializer.Meta):
+        search_fields = ["text"]
