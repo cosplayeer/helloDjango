@@ -24,9 +24,37 @@ from rest_framework.permissions import AllowAny
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.serializers import DateField
+from rest_framework_extensions.cache.decorators import cache_response
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import PostFilter
+from rest_framework_extensions.key_constructor.bits import (
+    ListSqlQueryKeyBit,
+    PaginationKeyBit,
+    RetrieveSqlQueryKeyBit,
+)
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
+from .utils import UpdatedAtKeyBit
 
+
+class PostUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "post_updated_at"
+
+class CommentUpdatedAtKeyBit(UpdatedAtKeyBit):
+    key = "comment_updated_at"
+
+class PostListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = PostUpdatedAtKeyBit()
+
+class PostObjectKeyConstructor(DefaultKeyConstructor):
+    retrieve_sql = RetrieveSqlQueryKeyBit()
+    updated_at = PostUpdatedAtKeyBit()
+
+class CommentListKeyConstructor(DefaultKeyConstructor):
+    list_sql = ListSqlQueryKeyBit()
+    pagination = PaginationKeyBit()
+    updated_at = CommentUpdatedAtKeyBit()
 
 class IndexView(PaginationMixin, ListView):
     model = Post
@@ -92,6 +120,7 @@ class PostViewSet(
     filter_backends = [DjangoFilterBackend]
     filterset_class = PostFilter
     
+    @cache_response(timeout=5 * 60, key_func=CommentListKeyConstructor())
     @action(
         methods=["GET"],
         detail=True,
@@ -111,6 +140,14 @@ class PostViewSet(
         serializer = self.get_serializer(page, many=True)
         # 返回分页后的评论列表
         return self.get_paginated_response(serializer.data)
+
+    @cache_response(timeout=5 * 60, key_func=PostListKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @cache_response(timeout=5 * 60, key_func=PostObjectKeyConstructor())
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
 class PostDetailView(DetailView):
     # 这些属性的含义和 ListView 是一样的

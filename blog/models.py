@@ -8,7 +8,9 @@ from django.utils.html import strip_tags
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from django.utils.functional import cached_property
-
+from django.db.models.signals import post_delete, post_save
+from django.core.cache import cache
+from datetime import datetime
 
 def generate_rich_content(value):
     md = markdown.Markdown(
@@ -144,3 +146,10 @@ class Post(models.Model):
     @cached_property
     def rich_content(self):
         return generate_rich_content(self.body)
+    
+
+def change_post_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("post_updated_at", datetime.utcnow())
+
+post_save.connect(receiver=change_post_updated_at, sender=Post)
+post_delete.connect(receiver=change_post_updated_at, sender=Post)
