@@ -2,7 +2,6 @@ version: '3'
 
 volumes:
   database_local:
-  esdata_local:
 
 services:
   hellodjango_local:
