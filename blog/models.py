@@ -134,15 +134,15 @@ class Post(models.Model):
     def increase_views(self):
         self.views += 1
         self.save(update_fields=['views'])
-
+    # toc 属性是从正文标题中提取的目录
     @property
     def toc(self):
         return self.rich_content.get("toc", "")
-
+    # body_html 属性为解析后的正文内容
     @property
     def body_html(self):
         return self.rich_content.get("content", "")
-
+    # rich_content 是 body Markdown 内容解析后的 HTML 内容，使用了 cached_property 装饰器缓存解析后的结果，以降低多次访问的开销
     @cached_property
     def rich_content(self):
         return generate_rich_content(self.body)

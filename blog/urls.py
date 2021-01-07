@@ -14,6 +14,10 @@ urlpatterns = [
     path('tags/<int:pk>/', views.TagView.as_view(), name='tag'),
     # 其他 url 配置
     # path('search/', views.search, name='search'),
+    #最初级的首页api
     # path('api/index/', views.index),
+    # GenericAPIView 类视图
     # path('api/index/', views.IndexPostListAPIView.as_view()),
+    #视图集
+    # path("api/index/",views.index)
 ]

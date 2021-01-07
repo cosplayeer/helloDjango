@@ -49,6 +49,9 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     author = UserSerializer()
     tags = TagSerializer(many=True)
+    # 不能在Meta.fields直接添加
+    #     对于这里提到的 toc、body_html 属性，django-rest-framework 就无法推断其值的类型，也就无法自动使用对应的序列化字段对其进行序列化了。不过解决方法很简单，既然 django-rest-framework 无法自动推断，那我们就人工指定该使用何种类型的序列化字段就行了。
+    # 这里需要序列化的字段值都是字符串，因此在序列化器中显示地指定需要序列化的字段以及使用的系列化字段类型就可以了
     toc = serializers.CharField()
     body_html = serializers.CharField()
 
