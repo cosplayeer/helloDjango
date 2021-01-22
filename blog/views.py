@@ -114,7 +114,9 @@ class PostViewSet(
     )
     def list_archive_dates(self, request, *args, **kwargs):
         dates = Post.objects.dates('created_time', 'month', order='DESC')
+        # 独立使用序列化字段（Field）
         date_field = DateField()
+        # 通过列表推导式生成一个序列化后的归档日期列表，这个列表是可被序列化的
         data = [date_field.to_representation(date) for date in dates]
         return Response(data=data, status=status.HTTP_200_OK)
     
