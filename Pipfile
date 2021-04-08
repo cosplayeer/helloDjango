@@ -10,7 +10,7 @@ coverage = "*"
 yapf = "*"
 
 [packages]
-django = "==2.2.3"
+django = "==2.2.20"
 markdown = "*"
 pytz = "*"
 gunicorn = "*"
